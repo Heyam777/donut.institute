@@ -502,7 +502,14 @@
           <h3>Submit Texts and Notes</h3>
           <p>Send new PDFs, scans, and measurement pages. We will stage them into the library grid.</p>
         </div>
-        <form>
+        <form
+          name="vault-submission"
+          method="POST"
+          data-netlify="true"
+          netlify-honeypot="bot-field"
+        >
+          <input type="hidden" name="form-name" value="vault-submission" />
+          <input type="hidden" name="bot-field" />
           <input type="text" name="name" placeholder="Name" />
           <input type="email" name="email" placeholder="Email" />
           <textarea name="message" placeholder="Paste links or describe the files you want staged."></textarea>
