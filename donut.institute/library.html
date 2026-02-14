@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Donut Institute Library</title>
+  <meta name="description" content="Donut Institute library of texts and schematics." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Cinzel:wght@500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0b0c14;
+      --bg-deep: #070810;
+      --ink: #f4f0e6;
+      --muted: #c7c0b4;
+      --gold: #e4c07a;
+      --teal: #8bd7d0;
+      --violet: #9aa7ff;
+      --glass: rgba(18, 18, 30, 0.78);
+      --glass-soft: rgba(24, 24, 38, 0.58);
+      --line: rgba(244, 240, 230, 0.16);
+      --shadow: 0 20px 50px rgba(2, 4, 12, 0.65);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Space Mono", monospace;
+      background: var(--bg);
+      min-height: 100vh;
+    }
+
+    .sky {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(1200px 800px at 20% 10%, rgba(155, 120, 255, 0.18), transparent 60%),
+        radial-gradient(900px 700px at 80% 20%, rgba(228, 192, 122, 0.18), transparent 60%),
+        radial-gradient(1000px 700px at 50% 90%, rgba(139, 215, 208, 0.12), transparent 60%),
+        linear-gradient(180deg, #0a0b14 0%, #101225 60%, #0b0c14 100%);
+      z-index: 0;
+    }
+
+    .stars {
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.5), transparent 60%),
+        radial-gradient(1px 1px at 80px 120px, rgba(255,255,255,0.35), transparent 60%),
+        radial-gradient(1px 1px at 140px 60px, rgba(255,255,255,0.4), transparent 60%),
+        radial-gradient(2px 2px at 200px 160px, rgba(255,255,255,0.3), transparent 60%),
+        radial-gradient(1px 1px at 280px 40px, rgba(255,255,255,0.35), transparent 60%);
+      background-size: 320px 200px;
+      opacity: 0.7;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .page { position: relative; z-index: 2; }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(12px);
+      background: rgba(8, 10, 18, 0.75);
+      border-bottom: 1px solid rgba(244, 240, 230, 0.08);
+    }
+
+    .nav {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(244, 240, 230, 0.2);
+      background: rgba(16, 18, 28, 0.7);
+      font-family: "Orbitron", sans-serif;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .brand .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 12px rgba(228, 192, 122, 0.8);
+    }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 0.85rem;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding-bottom: 4px;
+      border-bottom: 1px solid transparent;
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .nav-links a:hover { color: var(--ink); border-color: var(--gold); }
+
+    .hero {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 64px 24px 20px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-family: "Orbitron", sans-serif;
+      font-size: clamp(2.2rem, 5vw, 4.2rem);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin: 0 0 12px;
+      background: linear-gradient(90deg, #b8d7ff, #f2d58a, #f2d58a, #9aa7ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero p {
+      margin: 0 auto;
+      max-width: 760px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .controls {
+      max-width: 1200px;
+      margin: 28px auto 10px;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 1.2fr 2fr;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .search {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(244, 240, 230, 0.16);
+      background: rgba(8, 10, 16, 0.7);
+    }
+
+    .search input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--ink);
+      font-family: "Space Mono", monospace;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chip {
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(244, 240, 230, 0.2);
+      background: rgba(20, 22, 34, 0.7);
+      color: var(--muted);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .chip.is-active {
+      color: var(--ink);
+      border-color: var(--gold);
+      background: rgba(228, 192, 122, 0.12);
+    }
+
+    .grid {
+      max-width: 1200px;
+      margin: 20px auto 80px;
+      padding: 0 24px 40px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--glass);
+      border: 1px solid rgba(244, 240, 230, 0.14);
+      border-radius: 20px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow);
+    }
+
+    .cover {
+      aspect-ratio: 1;
+      background:
+        radial-gradient(circle at 20% 20%, hsla(var(--h), 70%, 65%, 0.35), transparent 60%),
+        radial-gradient(circle at 80% 80%, hsla(calc(var(--h) + 40), 70%, 55%, 0.35), transparent 60%),
+        linear-gradient(120deg, rgba(24, 24, 40, 0.85), rgba(12, 12, 22, 0.95));
+      position: relative;
+    }
+
+    .cover::before,
+    .cover::after {
+      content: "";
+      position: absolute;
+      inset: 12%;
+      border-radius: 50%;
+      border: 1px solid rgba(244, 240, 230, 0.18);
+    }
+
+    .cover::after {
+      inset: 28%;
+      border-style: dashed;
+      border-color: rgba(139, 215, 208, 0.35);
+    }
+
+    .card-body {
+      padding: 16px 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .card h3 {
+      margin: 0;
+      font-family: "Cinzel", serif;
+      font-size: 1rem;
+      letter-spacing: 0.06em;
+      color: var(--ink);
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.85rem;
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    .meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 6px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--teal);
+    }
+
+    .download {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(244, 240, 230, 0.2);
+      background: rgba(20, 22, 34, 0.7);
+      color: var(--ink);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.72rem;
+      text-decoration: none;
+      margin-top: 8px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .download:hover { transform: translateY(-2px); border-color: var(--gold); }
+
+    .count {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px 10px;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 880px) {
+      .controls { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .nav { flex-direction: column; align-items: flex-start; }
+      .hero h1 { letter-spacing: 0.1em; }
+    }
+  </style>
+</head>
+<body>
+  <div class="sky" aria-hidden="true"></div>
+  <div class="stars" aria-hidden="true"></div>
+
+  <div class="page">
+    <header>
+      <div class="nav">
+        <a class="brand" href="index.html"><span class="dot" aria-hidden="true"></span> Donut Institute</a>
+        <nav class="nav-links" aria-label="Primary">
+          <a href="index.html">Home</a>
+          <a href="#vault">Text Vault</a>
+          <a href="#filters">Filters</a>
+        </nav>
+      </div>
+    </header>
+
+    <section class="hero" id="vault">
+      <h1>Library Grid</h1>
+      <p>
+        Every PDF in the Papers folder. Each square holds a cover image, a short scope note,
+        and a direct download.
+      </p>
+    </section>
+
+    <section class="controls" id="filters">
+      <label class="search">
+        <span>Search</span>
+        <input type="search" id="searchInput" placeholder="Search titles or scope" aria-label="Search papers" />
+      </label>
+      <div class="filters" id="filterChips"></div>
+    </section>
+
+    <div class="count" id="resultCount"></div>
+    <section class="grid" id="paperGrid" aria-live="polite"></section>
+  </div>
+
+  <script>
+    const papers = [
+  {
+    "title": "A Holographic, Superfluid Metaphor",
+    "file": "Papers/A%20Holographic%2C%20Superfluid%20Metaphor.pdf",
+    "category": "Foundations",
+    "desc": "Holographic boundary-bulk logic and interference framing"
+  },
+  {
+    "title": "Dynamic Field Models of Attention- Fractal Rhythms, Resonance, and Metaphors",
+    "file": "Papers/Dynamic%20Field%20Models%20of%20Attention-%20Fractal%20Rhythms%2C%20Resonance%2C%20and%20Metaphors.pdf",
+    "category": "Foundations",
+    "desc": "Attention dynamics, control surfaces, and stability windows; temporal structure, rhythmic organization, and cadence"
+  },
+  {
+    "title": "Quantum Fields, Spacetime and Excitations",
+    "file": "Papers/Quantum%20Fields%2C%20Spacetime%20and%20Excitations.pdf",
+    "category": "Foundations",
+    "desc": "Quantum-inspired field models and structural metaphors"
+  },
+  {
+    "title": "Advanced Math Tools for Modeling Cogitive Dynamics o a Toroidal Manifold",
+    "file": "Papers/Advanced%20Math%20Tools%20for%20Modeling%20Cogitive%20Dynamics%20o%20a%20Toroidal%20Manifold.pdf",
+    "category": "Foundations",
+    "desc": "Toroidal geometry, ring attractors, cyclic topology; topological analysis and low-dimensional manifolds"
+  },
+  {
+    "title": "Attention as a Fractal-Holographic Resonance Field",
+    "file": "Papers/Attention%20as%20a%20Fractal-Holographic%20Resonance%20Field.pdf",
+    "category": "Foundations",
+    "desc": "Holographic boundary-bulk logic and interference framing; attention dynamics, control surfaces, and stability windows"
+  },
+  {
+    "title": "Bio-Symbolic Bridge - Design Document for DonutOS",
+    "file": "Papers/Bio-Symbolic%20Bridge%20-%20Design%20Document%20for%20DonutOS.pdf",
+    "category": "Foundations",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Boundary Conditions and Global Dynamics From Holographic Principle to Attention Interfaces",
+    "file": "Papers/Boundary%20Conditions%20and%20Global%20Dynamics_%20From%20Holographic%20Principle%20to%20Attention%20Interfaces.pdf",
+    "category": "Foundations",
+    "desc": "Holographic boundary-bulk logic and interference framing; attention dynamics, control surfaces, and stability windows; UI mapping, interaction design, and..."
+  },
+  {
+    "title": "Brain Wave at Criticality",
+    "file": "Papers/Brain%20Wave%20at%20Criticality.pdf",
+    "category": "Foundations",
+    "desc": "Neural signals, brain dynamics, and measurement pipelines; critical dynamics, edge-of-chaos behavior, and stability"
+  },
+  {
+    "title": "Chaos Theory and the Creative Time Index (CTI) Foundations and Tool Design",
+    "file": "Papers/Chaos%20Theory%20and%20the%20Creative%20Time%20Index%20%28CTI%29_%20Foundations%20and%20Tool%20Design.pdf",
+    "category": "Foundations",
+    "desc": "Critical dynamics, edge-of-chaos behavior, and stability; temporal structure, rhythmic organization, and cadence"
+  },
+  {
+    "title": "Coherence Sculpting",
+    "file": "Papers/Coherence%20Sculpting.pdf",
+    "category": "Foundations",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Compositional Scene Algebra for DonutOS Category Theory, Topology & Toroidal Attention",
+    "file": "Papers/Compositional%20Scene%20Algebra%20for%20DonutOS_%20Category%20Theory%2C%20Topology%20%26%20Toroidal%20Attention.pdf",
+    "category": "Foundations",
+    "desc": "Toroidal geometry, ring attractors, cyclic topology; attention dynamics, control surfaces, and stability windows; topological analysis and low-dimensional manifolds"
+  },
+  {
+    "title": "Contact Donut",
+    "file": "Papers/Contact%20Donut.pdf",
+    "category": "Foundations",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Continuous Attractor Networks and Toroidal Manifolds in Navigation and UI Design",
+    "file": "Papers/Continuous%20Attractor%20Networks%20and%20Toroidal%20Manifolds%20in%20Navigation%20and%20UI%20Design.pdf",
+    "category": "Foundations",
+    "desc": "Toroidal geometry, ring attractors, cyclic topology; UI mapping, interaction design, and visualization logic"
+  },
+  {
+    "title": "Creation of Light",
+    "file": "Papers/Creation%20of%20Light.pdf",
+    "category": "Foundations",
+    "desc": "Optics, light behavior, and display feasibility"
+  },
+  {
+    "title": "Cyclical Time and Rhythmic Rituals Entrainment, Neural Synchrony, and Social Bonding",
+    "file": "Papers/Cyclical%20Time%20and%20Rhythmic%20Rituals_%20Entrainment%2C%20Neural%20Synchrony%2C%20and%20Social%20Bonding.pdf",
+    "category": "Foundations",
+    "desc": "Neural signals, brain dynamics, and measurement pipelines; temporal structure, rhythmic organization, and cadence"
+  },
+  {
+    "title": "Donut Grid",
+    "file": "Papers/Donut%20Grid.pdf",
+    "category": "Foundations",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Donut of Attention Solar OS - Conceptual Framework and Developer Blueprint",
+    "file": "Papers/Donut%20of%20Attention%20_%20Solar%20OS%20-%20Conceptual%20Framework%20and%20Developer%20Blueprint.pdf",
+    "category": "Foundations",
+    "desc": "Attention dynamics, control surfaces, and stability windows"
+  },
+  {
+    "title": "DonutOS Optics & QFT Lab - Feature Specification",
+    "file": "Papers/DonutOS%20Optics%20%26%20QFT%20Lab%20-%20Feature%20Specification.pdf",
+    "category": "Foundations",
+    "desc": "Quantum-inspired field models and structural metaphors; optics, light behavior, and display feasibility"
+  },
+  {
+    "title": "EEG-Based Intent Classification for BCI User Interface Control",
+    "file": "Papers/EEG-Based%20Intent%20Classification%20for%20BCI%20User%20Interface%20Control.pdf",
+    "category": "Foundations",
+    "desc": "Neural signals, brain dynamics, and measurement pipelines; UI mapping, interaction design, and visualization logic"
+  },
+  {
+    "title": "Facilitating Group Phase Synchronization through Shared Feedback",
+    "file": "Papers/Facilitating%20Group%20Phase%20Synchronization%20through%20Shared%20Feedback.pdf",
+    "category": "Foundations",
+    "desc": "Phase coupling, synchrony, entrainment, and cycle control"
+  },
+  {
+    "title": "Fluid Metaphors",
+    "file": "Papers/Fluid%20Metaphors.pdf",
+    "category": "Foundations",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Fractal Holographic Geometry Flower of Life, Consciousness, and Visualizing Energy",
+    "file": "Papers/Fractal%20Holographic%20Geometry_%20Flower%20of%20Life%2C%20Consciousness%2C%20and%20Visualizing%20Energy.pdf",
+    "category": "Foundations",
+    "desc": "Holographic boundary-bulk logic and interference framing"
+  },
+  {
+    "title": "Fractal Rhythms and Critical Avalanches in Multi-Scale Brain Dynamics",
+    "file": "Papers/Fractal%20Rhythms%20and%20Critical%20Avalanches%20in%20Multi-Scale%20Brain%20Dynamics.pdf",
+    "category": "Foundations",
+    "desc": "Neural signals, brain dynamics, and measurement pipelines; critical dynamics, edge-of-chaos behavior, and stability; temporal structure, rhythmic organization, and..."
+  },
+  {
+    "title": "Gyroscopic Cognitive Donut A Toroidal Quantum Field Model of Attention...",
+    "file": "Papers/Gyroscopic%20Cognitive%20Donut%20A%20Toroidal%20Quantum%20Field%20Model%20of%20Attention....pdf",
+    "category": "Foundations",
+    "desc": "Toroidal geometry, ring attractors, cyclic topology; attention dynamics, control surfaces, and stability windows; quantum-inspired field models and structural..."
+  },
+  {
+    "title": "Holo-Multi-Scale Attention Framework",
+    "file": "Papers/Holo-Multi-Scale%20Attention%20Framework.pdf",
+    "category": "Foundations",
+    "desc": "Holographic boundary-bulk logic and interference framing; attention dynamics, control surfaces, and stability windows"
+  },
+  {
+    "title": "Holo Donut",
+    "file": "Papers/Holo_Donut.pdf",
+    "category": "Foundations",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Holographic Attention and the Rhythm of Timeless Emergence",
+    "file": "Papers/Holographic%20Attention%20and%20the%20Rhythm%20of%20Timeless%20Emergence.pdf",
+    "category": "Foundations",
+    "desc": "Holographic boundary-bulk logic and interference framing; attention dynamics, control surfaces, and stability windows; temporal structure, rhythmic organization, and..."
+  },
+  {
+    "title": "Holographic Tensor Networks and AdS CFT Tilings",
+    "file": "Papers/Holographic%20Tensor%20Networks%20and%20AdS_CFT%20Tilings.pdf",
+    "category": "Foundations",
+    "desc": "Holographic boundary-bulk logic and interference framing; quantum-inspired field models and structural metaphors"
+  },
+  {
+    "title": "Hopf Fibration in Quantum Neuropsychology of Mind and Attention",
+    "file": "Papers/Hopf%20Fibration%20in%20Quantum%20Neuropsychology%20of%20Mind%20and%20Attention.pdf",
+    "category": "Foundations",
+    "desc": "Attention dynamics, control surfaces, and stability windows; quantum-inspired field models and structural metaphors"
+  },
+  {
+    "title": "Hybrid Symbolic-Geometric Reasoning in AI",
+    "file": "Papers/Hybrid%20Symbolic-Geometric%20Reasoning%20in%20AI.pdf",
+    "category": "Foundations",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Integrating Space-Time in AI",
+    "file": "Papers/Integrating%20Space-Time%20in%20AI.pdf",
+    "category": "Foundations",
+    "desc": "Temporal structure, rhythmic organization, and cadence"
+  },
+  {
+    "title": "Interactive Holographic and Tensor-Network Overlays in WebGL Three.js",
+    "file": "Papers/Interactive%20Holographic%20and%20Tensor-Network%20Overlays%20in%20WebGL_Three.js.pdf",
+    "category": "Foundations",
+    "desc": "Holographic boundary-bulk logic and interference framing"
+  },
+  {
+    "title": "Minimal Code, Maximal Field - Towards a \"Donut\" Framework in DoA",
+    "file": "Papers/Minimal%20Code%2C%20Maximal%20Field%20-%20Towards%20a%20%22Donut%22%20Framework%20in%20DoA.pdf",
+    "category": "Foundations",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Multi-Axis Gyroscope \"Levogyre\" Blueprint Engineering, Cosmic Frames, and Perception",
+    "file": "Papers/Multi-Axis%20Gyroscope%20%22Levogyre%22%20Blueprint_%20Engineering%2C%20Cosmic%20Frames%2C%20and%20Perception.pdf",
+    "category": "Foundations",
+    "desc": "Toroidal geometry, ring attractors, cyclic topology"
+  },
+  {
+    "title": "Multimodal Closed-Loop Biofeedback Systems for Dynamic Audiovisual Environments",
+    "file": "Papers/Multimodal%20Closed-Loop%20Biofeedback%20Systems%20for%20Dynamic%20Audiovisual%20Environments.pdf",
+    "category": "Foundations",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Neural Manifolds",
+    "file": "Papers/Neural_Manifolds.pdf",
+    "category": "Foundations",
+    "desc": "Neural signals, brain dynamics, and measurement pipelines"
+  },
+  {
+    "title": "Non-Invasive Phase-Based Neurostimulation for Enhancing Attention",
+    "file": "Papers/Non-Invasive%20Phase-Based%20Neurostimulation%20for%20Enhancing%20Attention.pdf",
+    "category": "Foundations",
+    "desc": "Phase coupling, synchrony, entrainment, and cycle control; attention dynamics, control surfaces, and stability windows"
+  },
+  {
+    "title": "Operating Near the Edge of Chaos Evidence and Design Principles",
+    "file": "Papers/Operating%20Near%20the%20Edge%20of%20Chaos_%20Evidence%20and%20Design%20Principles.pdf",
+    "category": "Foundations",
+    "desc": "Critical dynamics, edge-of-chaos behavior, and stability"
+  },
+  {
+    "title": "Paraconsistency, Ambiguity, and Multi-Hypothesis Reasoning in Cognition and UI Design",
+    "file": "Papers/Paraconsistency%2C%20Ambiguity%2C%20and%20Multi-Hypothesis%20Reasoning%20in%20Cognition%20and%20UI%20Design.pdf",
+    "category": "Foundations",
+    "desc": "UI mapping, interaction design, and visualization logic"
+  },
+  {
+    "title": "Personalised Fractal Time Mapping",
+    "file": "Papers/Personalised%20Fractal%20Time%20Mapping.pdf",
+    "category": "Foundations",
+    "desc": "Temporal structure, rhythmic organization, and cadence"
+  },
+  {
+    "title": "Phase Oscillators for Control, Coordination, and Attention Routing in AI Systems",
+    "file": "Papers/Phase%20Oscillators%20for%20Control%2C%20Coordination%2C%20and%20Attention%20Routing%20in%20AI%20Systems.pdf",
+    "category": "Foundations",
+    "desc": "Phase coupling, synchrony, entrainment, and cycle control; attention dynamics, control surfaces, and stability windows"
+  },
+  {
+    "title": "Phase-Locking Across Scales",
+    "file": "Papers/Phase-Locking%20Across%20Scales.pdf",
+    "category": "Foundations",
+    "desc": "Phase coupling, synchrony, entrainment, and cycle control"
+  },
+  {
+    "title": "Phase-Mapped Journaling Cyclical Approaches to Journaling and Lifelogging",
+    "file": "Papers/Phase-Mapped%20Journaling_%20Cyclical%20Approaches%20to%20Journaling%20and%20Lifelogging.pdf",
+    "category": "Foundations",
+    "desc": "Phase coupling, synchrony, entrainment, and cycle control"
+  },
+  {
+    "title": "PhaseLocked Attractor Wells Soft Control Primitives in the Donut of Attention",
+    "file": "Papers/PhaseLocked%20Attractor%20Wells_%20Soft%20Control%20Primitives%20in%20the%20Donut%20of%20Attention.pdf",
+    "category": "Foundations",
+    "desc": "Phase coupling, synchrony, entrainment, and cycle control; attention dynamics, control surfaces, and stability windows"
+  },
+  {
+    "title": "Platonic Spin Networks for Quantum Geometry and Attention Interfaces",
+    "file": "Papers/Platonic%20Spin%20Networks%20for%20Quantum%20Geometry%20and%20Attention%20Interfaces.pdf",
+    "category": "Foundations",
+    "desc": "Attention dynamics, control surfaces, and stability windows; UI mapping, interaction design, and visualization logic; quantum-inspired field models and..."
+  },
+  {
+    "title": "Predictive Coding with Cyclic Attractors Integrating Ring and Toroidal Dynamics",
+    "file": "Papers/Predictive%20Coding%20with%20Cyclic%20Attractors_%20Integrating%20Ring%20and%20Toroidal%20Dynamics.pdf",
+    "category": "Foundations",
+    "desc": "Toroidal geometry, ring attractors, cyclic topology"
+  },
+  {
+    "title": "Quantifying Serendipity Research Foundations and Design Inspirations",
+    "file": "Papers/Quantifying%20Serendipity_%20Research%20Foundations%20and%20Design%20Inspirations.pdf",
+    "category": "Foundations",
+    "desc": "Exploration metrics and novelty-oriented design"
+  },
+  {
+    "title": "Quantum Biophysics of Mind and Attention- Toward a Modular \"Donut\" Model of Consciousness and Development",
+    "file": "Papers/Quantum%20Biophysics%20of%20Mind%20and%20Attention-%20Toward%20a%20Modular%20%22Donut%22%20Model%20of%20Consciousness%20and%20Development.pdf",
+    "category": "Foundations",
+    "desc": "Attention dynamics, control surfaces, and stability windows; quantum-inspired field models and structural metaphors"
+  },
+  {
+    "title": "Real-Time Holographic Torus Display Technologies & Viability",
+    "file": "Papers/Real-Time%20Holographic%20Torus%20Display_%20Technologies%20%26%20Viability.pdf",
+    "category": "Foundations",
+    "desc": "Toroidal geometry, ring attractors, cyclic topology; holographic boundary-bulk logic and interference framing; temporal structure, rhythmic organization, and cadence"
+  },
+  {
+    "title": "Recurring Geometric Patterns Cognition, Culture, and Design",
+    "file": "Papers/Recurring%20Geometric%20Patterns_%20Cognition%2C%20Culture%2C%20and%20Design.pdf",
+    "category": "Foundations",
+    "desc": "Toroidal geometry, ring attractors, cyclic topology"
+  },
+  {
+    "title": "Rhythms of Vision Myth, Science, and the Evolution of Belief",
+    "file": "Papers/Rhythms%20of%20Vision_%20Myth%2C%20Science%2C%20and%20the%20Evolution%20of%20Belief.pdf",
+    "category": "Foundations",
+    "desc": "Temporal structure, rhythmic organization, and cadence"
+  },
+  {
+    "title": "Robust Toroidal Attention Representations Insights from NeRFs, Transformers, and Holographic Memory",
+    "file": "Papers/Robust%20Toroidal%20Attention%20Representations_%20Insights%20from%20NeRFs%2C%20Transformers%2C%20and%20Holographic%20Memory.pdf",
+    "category": "Foundations",
+    "desc": "Toroidal geometry, ring attractors, cyclic topology; holographic boundary-bulk logic and interference framing; attention dynamics, control surfaces, and stability..."
+  },
+  {
+    "title": "Symbolic Dynamics & Te Langiage of Creation",
+    "file": "Papers/Symbolic%20Dynamics%20%26%20Te%20Langiage%20of%20Creation.pdf",
+    "category": "Foundations",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Symplectic and Category-Theoretic Brain-State Mapping for DonutOS",
+    "file": "Papers/Symplectic%20and%20Category-Theoretic%20Brain-State%20Mapping%20for%20DonutOS.pdf",
+    "category": "Foundations",
+    "desc": "Neural signals, brain dynamics, and measurement pipelines; compositional structure, algebraic modeling, and semantics"
+  },
+  {
+    "title": "The Holographic Torus",
+    "file": "Papers/The%20Holographic%20Torus.pdf",
+    "category": "Foundations",
+    "desc": "Toroidal geometry, ring attractors, cyclic topology; holographic boundary-bulk logic and interference framing"
+  },
+  {
+    "title": "The Holographic Torus A Universal Metaphor in Science and Consciousness",
+    "file": "Papers/The%20Holographic%20Torus_%20A%20Universal%20Metaphor%20in%20Science%20and%20Consciousness.pdf",
+    "category": "Foundations",
+    "desc": "Toroidal geometry, ring attractors, cyclic topology; holographic boundary-bulk logic and interference framing"
+  },
+  {
+    "title": "The Ideal Humanity as a Holographic Consciousness Engine Across Multiversal Architectures",
+    "file": "Papers/The%20Ideal%20Humanity%20as%20a%20Holographic%20Consciousness%20Engine%20Across%20Multiversal%20Architectures.pdf",
+    "category": "Foundations",
+    "desc": "Holographic boundary-bulk logic and interference framing"
+  },
+  {
+    "title": "The Levogyre and the \"Donut of Attention\"",
+    "file": "Papers/The%20Levogyre%20and%20the%20%22Donut%20of%20Attention%22.pdf",
+    "category": "Foundations",
+    "desc": "Attention dynamics, control surfaces, and stability windows"
+  },
+  {
+    "title": "The Primordial Point",
+    "file": "Papers/The%20Primordial%20Point.pdf",
+    "category": "Foundations",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "The Toroidal Map for The Mind",
+    "file": "Papers/The%20Toroidal%20Map%20for%20The%20Mind.pdf",
+    "category": "Foundations",
+    "desc": "Toroidal geometry, ring attractors, cyclic topology"
+  },
+  {
+    "title": "The Wheeler-DeWitt Equation and Timelessness",
+    "file": "Papers/The%20Wheeler-DeWitt%20Equation%20and%20Timelessness.pdf",
+    "category": "Foundations",
+    "desc": "Temporal structure, rhythmic organization, and cadence"
+  },
+  {
+    "title": "Tn & Sn",
+    "file": "Papers/Tn%20%26%20Sn.pdf",
+    "category": "Foundations",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Topological Data Analysis & the \"Donut of Attention\" - Research Map",
+    "file": "Papers/Topological%20Data%20Analysis%20%26%20the%20%22Donut%20of%20Attention%22%20-%20Research%20Map.pdf",
+    "category": "Foundations",
+    "desc": "Attention dynamics, control surfaces, and stability windows; topological analysis and low-dimensional manifolds"
+  },
+  {
+    "title": "Topological Data Analysis in Tracking Cognitive and Physiological States",
+    "file": "Papers/Topological%20Data%20Analysis%20in%20Tracking%20Cognitive%20and%20Physiological%20States.pdf",
+    "category": "Foundations",
+    "desc": "Topological analysis and low-dimensional manifolds"
+  },
+  {
+    "title": "Topology-Driven UX Insights Persistent Homology in Design",
+    "file": "Papers/Topology-Driven%20UX%20Insights_%20Persistent%20Homology%20in%20Design.pdf",
+    "category": "Foundations",
+    "desc": "Topological analysis and low-dimensional manifolds; UI mapping, interaction design, and visualization logic"
+  },
+  {
+    "title": "Toroidal Map : Fractal Addition",
+    "file": "Papers/Toroidal%20Map%20%3A%20Fractal%20Addition.pdf",
+    "category": "Foundations",
+    "desc": "Toroidal geometry, ring attractors, cyclic topology"
+  },
+  {
+    "title": "Toroidal Map Add2",
+    "file": "Papers/Toroidal%20Map%20Add2.pdf",
+    "category": "Foundations",
+    "desc": "Toroidal geometry, ring attractors, cyclic topology"
+  },
+  {
+    "title": "Toward the Modular Integration of In-Air Holographic Display Systems A Technical Framework for Mult",
+    "file": "Papers/Toward%20the%20Modular%20Integration%20of%20In-Air%20Holographic%20Display%20Systems_%20A%20Technical%20Framework%20for%20Mult.pdf",
+    "category": "Foundations",
+    "desc": "Holographic boundary-bulk logic and interference framing; UI mapping, interaction design, and visualization logic; optics, light behavior, and display..."
+  },
+  {
+    "title": "Urban-Scale Immersive Installations Light, Sound, and Shared Experience",
+    "file": "Papers/Urban-Scale%20Immersive%20Installations_%20Light%2C%20Sound%2C%20and%20Shared%20Experience.pdf",
+    "category": "Foundations",
+    "desc": "Acoustic patterns and audio-visual coupling; optics, light behavior, and display feasibility"
+  },
+  {
+    "title": "VBFG Disintegrator - Speculative Engineering Blueprint",
+    "file": "Papers/VBFG%20Disintegrator%20-%20Speculative%20Engineering%20Blueprint.pdf",
+    "category": "Foundations",
+    "desc": "Toroidal geometry, ring attractors, cyclic topology"
+  },
+  {
+    "title": "Weak Control Strategies in Complex Systems",
+    "file": "Papers/Weak%20Control%20Strategies%20in%20Complex%20Systems.pdf",
+    "category": "Foundations",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Category Theory and the DonutOS Foundations and Futures of a Compositional \"Attention-Torus\" U",
+    "file": "Papers/__Category%20Theory%20and%20the%20DonutOS___%20_Foundations%20and%20Futures%20of%20a%20Compositional%20%22Attention-Torus%22%20U.pdf",
+    "category": "Foundations",
+    "desc": "Toroidal geometry, ring attractors, cyclic topology; attention dynamics, control surfaces, and stability windows; compositional structure, algebraic modeling, and..."
+  },
+  {
+    "title": "Bullseye",
+    "file": "Papers/10%20Clouds%20/Bullseye.pdf",
+    "category": "Field Atlases",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Clouds",
+    "file": "Papers/10%20Clouds%20/Clouds.pdf",
+    "category": "Field Atlases",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Concentric Circles & Squares Layers of Consciousness in Symbol and Design",
+    "file": "Papers/10%20Clouds%20/Concentric%20Circles%20%26%20Squares_%20Layers%20of%20Consciousness%20in%20Symbol%20and%20Design.pdf",
+    "category": "Field Atlases",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Cross-Disciplinary Design Insights for DonutOS UI VR Interfaces",
+    "file": "Papers/10%20Clouds%20/Cross-Disciplinary%20Design%20Insights%20for%20DonutOS%20UI_VR%20Interfaces.pdf",
+    "category": "Field Atlases",
+    "desc": "UI mapping, interaction design, and visualization logic"
+  },
+  {
+    "title": "Debugging the Membrane Directory Rendering Issue (1)",
+    "file": "Papers/10%20Clouds%20/Debugging%20the%20Membrane%20Directory%20Rendering%20Issue%20%281%29.pdf",
+    "category": "Field Atlases",
+    "desc": "Toroidal geometry, ring attractors, cyclic topology"
+  },
+  {
+    "title": "Dev Journal - Multiverse Donut Log",
+    "file": "Papers/10%20Clouds%20/Dev%20Journal%20-%20Multiverse%20Donut%20Log.pdf",
+    "category": "Field Atlases",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Evolving DonutOS Eternal Self-Time Integration, EEG-Phase UI & Holographic Bridge",
+    "file": "Papers/10%20Clouds%20/Evolving%20DonutOS_%20Eternal%20Self-Time%20Integration%2C%20EEG-Phase%20UI%20%26%20Holographic%20Bridge.pdf",
+    "category": "Field Atlases",
+    "desc": "Holographic boundary-bulk logic and interference framing; phase coupling, synchrony, entrainment, and cycle control; neural signals, brain dynamics, and..."
+  },
+  {
+    "title": "Expanded Deep-Search Prompts for the Donut of Attention Project",
+    "file": "Papers/10%20Clouds%20/Expanded%20Deep-Search%20Prompts%20for%20the%20Donut%20of%20Attention%20Project.pdf",
+    "category": "Field Atlases",
+    "desc": "Attention dynamics, control surfaces, and stability windows"
+  },
+  {
+    "title": "Expanding the Solar Holographic OS Insights and Experimental Submembrane Proposals",
+    "file": "Papers/10%20Clouds%20/Expanding%20the%20Solar%20Holographic%20OS_%20Insights%20and%20Experimental%20Submembrane%20Proposals.pdf",
+    "category": "Field Atlases",
+    "desc": "Holographic boundary-bulk logic and interference framing"
+  },
+  {
+    "title": "Membrane",
+    "file": "Papers/10%20Clouds%20/Membrane.pdf",
+    "category": "Field Atlases",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Multiscale Time Manifolds",
+    "file": "Papers/10%20Clouds%20/Multiscale%20Time%20Manifolds.pdf",
+    "category": "Field Atlases",
+    "desc": "Temporal structure, rhythmic organization, and cadence"
+  },
+  {
+    "title": "Personal Geometry",
+    "file": "Papers/10%20Clouds%20/Personal%20Geometry.pdf",
+    "category": "Field Atlases",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Report",
+    "file": "Papers/10%20Clouds%20/Report.pdf",
+    "category": "Field Atlases",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "The 10 Clouds Donuty of Attention Plan",
+    "file": "Papers/10%20Clouds%20/The%2010%20Clouds%20Donuty%20of%20Attention%20Plan.pdf",
+    "category": "Field Atlases",
+    "desc": "Attention dynamics, control surfaces, and stability windows"
+  },
+  {
+    "title": "Transforming the 10-Clouds Plan into a Modular Web-Based Guide",
+    "file": "Papers/10%20Clouds%20/Transforming%20the%2010-Clouds%20Plan%20into%20a%20Modular%20Web-Based%20Guide.pdf",
+    "category": "Field Atlases",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "circle & quare",
+    "file": "Papers/10%20Clouds%20/circle%20%26%20quare.pdf",
+    "category": "Field Atlases",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Framework",
+    "file": "Papers/Creative%20TIme/Framework.pdf",
+    "category": "Time & Rhythm",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Trajectory Mapping Toward Billion-Dollar Attractors",
+    "file": "Papers/Creative%20TIme/Trajectory%20Mapping%20Toward%20Billion-Dollar%20Attractors.pdf",
+    "category": "Time & Rhythm",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Color Mapping for Liquid Light Visualization",
+    "file": "Papers/Everything%20Chalice/Color%20Mapping%20for%20Liquid%20Light%20Visualization.pdf",
+    "category": "Geometry",
+    "desc": "Optics, light behavior, and display feasibility"
+  },
+  {
+    "title": "EEG Phase Coupling Metrics for Audiovisual Mapping",
+    "file": "Papers/Everything%20Chalice/EEG%20Phase_Coupling%20Metrics%20for%20Audiovisual%20Mapping.pdf",
+    "category": "Geometry",
+    "desc": "Phase coupling, synchrony, entrainment, and cycle control; neural signals, brain dynamics, and measurement pipelines"
+  },
+  {
+    "title": "EEG Sonification Strategies for the Chalice",
+    "file": "Papers/Everything%20Chalice/EEG%20Sonification%20Strategies%20for%20the%20Chalice.pdf",
+    "category": "Geometry",
+    "desc": "Neural signals, brain dynamics, and measurement pipelines"
+  },
+  {
+    "title": "Everything Chalice - Frameworks",
+    "file": "Papers/Everything%20Chalice/Everything%20Chalice%20-%20Frameworks.pdf",
+    "category": "Geometry",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Horn Geometry Memo",
+    "file": "Papers/Everything%20Chalice/Horn%20Geometry%20Memo.pdf",
+    "category": "Geometry",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Horn Geometry for the Everything Chalice",
+    "file": "Papers/Everything%20Chalice/Horn%20Geometry%20for%20the%20Everything%20Chalice.pdf",
+    "category": "Geometry",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Polaritons as Liquid Light Visual and Physical Behaviors",
+    "file": "Papers/Everything%20Chalice/Polaritons%20as%20Liquid%20Light_%20Visual%20and%20Physical%20Behaviors.pdf",
+    "category": "Geometry",
+    "desc": "Optics, light behavior, and display feasibility"
+  },
+  {
+    "title": "hg",
+    "file": "Papers/Everything%20Chalice/hg.pdf",
+    "category": "Geometry",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Language of Light & Donut Holographic Extraction and Navigation in DonutOS",
+    "file": "Papers/Holography/Language%20of%20Light%20%26%20Donut_%20Holographic%20Extraction%20and%20Navigation%20in%20DonutOS.pdf",
+    "category": "Holography & Light",
+    "desc": "Holographic boundary-bulk logic and interference framing; optics, light behavior, and display feasibility"
+  },
+  {
+    "title": "Multi-Dimensional Donut Joystick Framework for DonutOS",
+    "file": "Papers/Holography/Multi-Dimensional%20Donut%20Joystick%20Framework%20for%20DonutOS.pdf",
+    "category": "Holography & Light",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Toward a Holographic Model of Maximal Coherence (\"God's Mind\" as Metaphor)",
+    "file": "Papers/Holography/Toward%20a%20Holographic%20Model%20of%20Maximal%20Coherence%20%28%22God%27s%20Mind%22%20as%20Metaphor%29.pdf",
+    "category": "Holography & Light",
+    "desc": "Holographic boundary-bulk logic and interference framing"
+  },
+  {
+    "title": "Fractal Linguistics and Temporal Mapping for Holistic Language Comprehension",
+    "file": "Papers/Linguistics/Fractal%20Linguistics%20and%20Temporal%20Mapping%20for%20Holistic%20Language%20Comprehension.pdf",
+    "category": "Language",
+    "desc": "Temporal structure, rhythmic organization, and cadence"
+  },
+  {
+    "title": "Fractal, Holographic Language New Frameworks for Spoken Language Evolution",
+    "file": "Papers/Linguistics/Fractal%2C%20Holographic%20Language_%20New%20Frameworks%20for%20Spoken%20Language%20Evolution.pdf",
+    "category": "Language",
+    "desc": "Holographic boundary-bulk logic and interference framing"
+  },
+  {
+    "title": "MLM",
+    "file": "Papers/Linguistics/MLM.pdf",
+    "category": "Language",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "The Donut of Attention A Fractal, Holographic, Temporal, and Model-Aware Meta-Model of Language",
+    "file": "Papers/Linguistics/The%20Donut%20of%20Attention_%20A%20Fractal%2C%20Holographic%2C%20Temporal%2C%20and%20Model-Aware%20Meta-Model%20of%20Language.pdf",
+    "category": "Language",
+    "desc": "Holographic boundary-bulk logic and interference framing; attention dynamics, control surfaces, and stability windows; temporal structure, rhythmic organization, and..."
+  },
+  {
+    "title": "The Fractal Lens of Narrative Comprehension",
+    "file": "Papers/Linguistics/The%20Fractal%20Lens%20of%20Narrative%20Comprehension.pdf",
+    "category": "Language",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Topos and Model Theories for the Donut Project",
+    "file": "Papers/Linguistics/Topos%20and%20Model%20Theories%20for%20the%20Donut%20Project.pdf",
+    "category": "Language",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Designing Ritual & Meaning in Interactive Experiences",
+    "file": "Papers/Scientific%20Magic/Herbs/Designing%20Ritual%20%26%20Meaning%20in%20Interactive%20Experiences.pdf",
+    "category": "Ritual & Culture",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Herbal Magic Ontology",
+    "file": "Papers/Scientific%20Magic/Herbs/Herbal%20Magic%20Ontology.pdf",
+    "category": "Ritual & Culture",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Holographic UI Pattern Library for Volumetric & LightField Displays",
+    "file": "Papers/Scientific%20Magic/Herbs/Holographic%20UI%20Pattern%20Library%20for%20Volumetric%20%26%20LightField%20Displays.pdf",
+    "category": "Ritual & Culture",
+    "desc": "Holographic boundary-bulk logic and interference framing; UI mapping, interaction design, and visualization logic; optics, light behavior, and display..."
+  },
+  {
+    "title": "Knowledge Graph Model for Symbolic Herb Reasoning",
+    "file": "Papers/Scientific%20Magic/Herbs/Knowledge%20Graph%20Model%20for%20Symbolic%20Herb%20Reasoning.pdf",
+    "category": "Ritual & Culture",
+    "desc": "Critical dynamics, edge-of-chaos behavior, and stability"
+  },
+  {
+    "title": "Mapping Symbolic Herb Attributes to Geometric Signatures",
+    "file": "Papers/Scientific%20Magic/Herbs/Mapping%20Symbolic%20Herb%20Attributes%20to%20Geometric%20Signatures.pdf",
+    "category": "Ritual & Culture",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Materials & Fabrication for Ritual Atmospherics",
+    "file": "Papers/Scientific%20Magic/Herbs/Materials%20%26%20Fabrication%20for%20Ritual%20Atmospherics.pdf",
+    "category": "Ritual & Culture",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Multimodal Interaction Design for Real-Time Control (Gesture, Voice, Biofeedback)",
+    "file": "Papers/Scientific%20Magic/Herbs/Multimodal%20Interaction%20Design%20for%20Real-Time%20Control%20%28Gesture%2C%20Voice%2C%20Biofeedback%29.pdf",
+    "category": "Ritual & Culture",
+    "desc": "UI mapping, interaction design, and visualization logic; temporal structure, rhythmic organization, and cadence"
+  },
+  {
+    "title": "Sensing Methods for RealTime Herb Signatures",
+    "file": "Papers/Scientific%20Magic/Herbs/Sensing%20Methods%20for%20RealTime%20Herb%20Signatures.pdf",
+    "category": "Ritual & Culture",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Symbolic Herb Ontology for Ritual Use",
+    "file": "Papers/Scientific%20Magic/Herbs/Symbolic%20Herb%20Ontology%20for%20Ritual%20Use.pdf",
+    "category": "Ritual & Culture",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Systems Resilience & Ethics Guardrails and Provenance in Herb SM Knowledge Base",
+    "file": "Papers/Scientific%20Magic/Herbs/Systems%20Resilience%20%26%20Ethics_%20Guardrails%20and%20Provenance%20in%20Herb%20SM%20Knowledge%20Base.pdf",
+    "category": "Ritual & Culture",
+    "desc": "Critical dynamics, edge-of-chaos behavior, and stability"
+  },
+  {
+    "title": "Temporal Dynamics of Herbal Effects in a Phase-Based Time Geometry",
+    "file": "Papers/Scientific%20Magic/Herbs/Temporal%20Dynamics%20of%20Herbal%20Effects%20in%20a%20Phase-Based%20Time%20Geometry.pdf",
+    "category": "Ritual & Culture",
+    "desc": "Phase coupling, synchrony, entrainment, and cycle control; temporal structure, rhythmic organization, and cadence"
+  },
+  {
+    "title": "Sci-Magic Dreams, Creation, and the Reality We Want to Live In",
+    "file": "Papers/Scientific%20Magic/Sci-Magic_%20Dreams%2C%20Creation%2C%20and%20the%20Reality%20We%20Want%20to%20Live%20In.pdf",
+    "category": "Ritual & Culture",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Scientific Magic Weaving Physics, Ritual, and Logic into One Enchanted Tapestry",
+    "file": "Papers/Scientific%20Magic/Scientific%20Magic_%20Weaving%20Physics%2C%20Ritual%2C%20and%20Logic%20into%20One%20Enchanted%20Tapestry.pdf",
+    "category": "Ritual & Culture",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Textual Holography A Practical Workbook",
+    "file": "Papers/Scientific%20Magic/Textual%20Holography_%20A%20Practical%20Workbook.pdf",
+    "category": "Ritual & Culture",
+    "desc": "Holographic boundary-bulk logic and interference framing"
+  },
+  {
+    "title": "The Liquid Crystal Spellbook Coherence in Light, Sound, and Breath",
+    "file": "Papers/Scientific%20Magic/The%20Liquid%20Crystal%20Spellbook_%20Coherence%20in%20Light%2C%20Sound%2C%20and%20Breath.pdf",
+    "category": "Ritual & Culture",
+    "desc": "Acoustic patterns and audio-visual coupling; optics, light behavior, and display feasibility"
+  },
+  {
+    "title": "The Sonic Glaem Phase-Aligned Voice of the Ideal Humanity",
+    "file": "Papers/Scientific%20Magic/The%20Sonic%20Glaem_%20Phase-Aligned%20Voice%20of%20the%20Ideal%20Humanity.pdf",
+    "category": "Ritual & Culture",
+    "desc": "Phase coupling, synchrony, entrainment, and cycle control; acoustic patterns and audio-visual coupling"
+  },
+  {
+    "title": "Biophotons (Ultraweak Photon Emission) Key References",
+    "file": "Papers/Scientific%20Magic/sm%20set/Biophotons%20%28Ultraweak%20Photon%20Emission%29_%20Key%20References.pdf",
+    "category": "Ritual & Culture",
+    "desc": "Optics, light behavior, and display feasibility"
+  },
+  {
+    "title": "Foundational Studies (Historical Insights)",
+    "file": "Papers/Scientific%20Magic/sm%20set/Foundational%20Studies%20%28Historical%20Insights%29.pdf",
+    "category": "Ritual & Culture",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Holographic Encoding and Boundary-Bulk Analogs",
+    "file": "Papers/Scientific%20Magic/sm%20set/Holographic%20Encoding%20and%20Boundary-Bulk%20Analogs.pdf",
+    "category": "Ritual & Culture",
+    "desc": "Holographic boundary-bulk logic and interference framing"
+  },
+  {
+    "title": "Holographic and Volumetric Mid-Air Display Technologies",
+    "file": "Papers/Scientific%20Magic/sm%20set/Holographic%20and%20Volumetric%20Mid-Air%20Display%20Technologies.pdf",
+    "category": "Ritual & Culture",
+    "desc": "Holographic boundary-bulk logic and interference framing; UI mapping, interaction design, and visualization logic; optics, light behavior, and display..."
+  },
+  {
+    "title": "Literature on Cymatics and Acoustic Geometry (Sound-Induced Patterns)",
+    "file": "Papers/Scientific%20Magic/sm%20set/Literature%20on%20Cymatics%20and%20Acoustic%20Geometry%20%28Sound-Induced%20Patterns%29.pdf",
+    "category": "Ritual & Culture",
+    "desc": "Acoustic patterns and audio-visual coupling"
+  },
+  {
+    "title": "Phase Coherence Metrics in EEG MEG HRV - Key Literature (Ranked Annotated Bibliography)",
+    "file": "Papers/Scientific%20Magic/sm%20set/Phase%20Coherence%20Metrics%20in%20EEG_MEG_HRV%20-%20Key%20Literature%20%28Ranked%20Annotated%20Bibliography%29.pdf",
+    "category": "Ritual & Culture",
+    "desc": "Phase coupling, synchrony, entrainment, and cycle control; neural signals, brain dynamics, and measurement pipelines"
+  },
+  {
+    "title": "Photobiomodulation Therapy in Systemic Healing and Wound Repair - Mechanisms, Evidence, and Safety",
+    "file": "Papers/Scientific%20Magic/sm%20set/Photobiomodulation%20Therapy%20in%20Systemic%20Healing%20and%20Wound%20Repair%20-%20Mechanisms%2C%20Evidence%2C%20and%20Safety.pdf",
+    "category": "Ritual & Culture",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Respiratory Entrainment & HRV Biofeedback - Key Literature (Paced Breathing ~0.1Hz)",
+    "file": "Papers/Scientific%20Magic/sm%20set/Respiratory%20Entrainment%20%26%20HRV%20Biofeedback%20-%20Key%20Literature%20%28Paced%20Breathing%20~0.1Hz%29.pdf",
+    "category": "Ritual & Culture",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Ritualized Interventions, Expectancy Effects, and Stress Biomarkers RCT Evidence",
+    "file": "Papers/Scientific%20Magic/sm%20set/Ritualized%20Interventions%2C%20Expectancy%20Effects%2C%20and%20Stress%20Biomarkers_%20RCT%20Evidence.pdf",
+    "category": "Ritual & Culture",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Safety Standards and Summaries for Laser, LED, and Sound Exposure in Public Displays and Wearables",
+    "file": "Papers/Scientific%20Magic/sm%20set/Safety%20Standards%20and%20Summaries%20for%20Laser%2C%20LED%2C%20and%20Sound%20Exposure%20in%20Public%20Displays%20and%20Wearables.pdf",
+    "category": "Ritual & Culture",
+    "desc": "Acoustic patterns and audio-visual coupling"
+  },
+  {
+    "title": "Structured Interfacial Water (EZ Water) - Deep Literature Review",
+    "file": "Papers/Scientific%20Magic/sm%20set/Structured%20Interfacial%20Water%20%28EZ%20Water%29%20-%20Deep%20Literature%20Review.pdf",
+    "category": "Ritual & Culture",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Symbolic Geometry as Cognitive Interface (A Textual Holography Basis)",
+    "file": "Papers/Scientific%20Magic/sm%20set/Symbolic%20Geometry%20as%20Cognitive%20Interface%20%28A%20Textual%20Holography%20Basis%29.pdf",
+    "category": "Ritual & Culture",
+    "desc": "Holographic boundary-bulk logic and interference framing; UI mapping, interaction design, and visualization logic"
+  },
+  {
+    "title": "Donudynomap UI Panel for Membrane",
+    "file": "Papers/specific%20SMs/Donudynomap%20UI%20Panel%20for%20Membrane.pdf",
+    "category": "Systems Mapping",
+    "desc": "UI mapping, interaction design, and visualization logic"
+  },
+  {
+    "title": "Geometries Derived from the Flower of Life Symbol",
+    "file": "Papers/specific%20SMs/Geometries%20Derived%20from%20the%20Flower%20of%20Life%20Symbol.pdf",
+    "category": "Systems Mapping",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Blueprint for Enchanting AI Personalities in Everyday Objects",
+    "file": "Papers/Super%20Thinking/Blueprint%20for%20Enchanting%20AI%20Personalities%20in%20Everyday%20Objects.pdf",
+    "category": "Psychology",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Cultivating Multidimensional Thinking Integrating Logic, Language, and Humor for Creative Insight",
+    "file": "Papers/Super%20Thinking/Cultivating%20Multidimensional%20Thinking_%20Integrating%20Logic%2C%20Language%2C%20and%20Humor%20for%20Creative%20Insight.pdf",
+    "category": "Psychology",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "Fractal-Holo-Looping A Recursive Mirror of Self in the Donut of Attention",
+    "file": "Papers/Super%20Thinking/Fractal-Holo-Looping_%20A%20Recursive%20Mirror%20of%20Self%20in%20the%20Donut%20of%20Attention.pdf",
+    "category": "Psychology",
+    "desc": "Holographic boundary-bulk logic and interference framing; attention dynamics, control surfaces, and stability windows"
+  },
+  {
+    "title": "Fractal-Holographic Dialogue Journal of Co-Creative Cognitive Evolution between User and AI",
+    "file": "Papers/Super%20Thinking/Fractal-Holographic%20Dialogue_%20Journal%20of%20Co-Creative%20Cognitive%20Evolution%20between%20User%20and%20AI.pdf",
+    "category": "Psychology",
+    "desc": "Holographic boundary-bulk logic and interference framing"
+  },
+  {
+    "title": "From Rigid Chronos to Creative Time How Language and Perspective Transform Our Experience of Time",
+    "file": "Papers/Super%20Thinking/From%20Rigid%20Chronos%20to%20Creative%20Time_%20How%20Language%20and%20Perspective%20Transform%20Our%20Experience%20of%20Time.pdf",
+    "category": "Psychology",
+    "desc": "Temporal structure, rhythmic organization, and cadence"
+  },
+  {
+    "title": "Innovator's Journey Paving \"The Way\" Through Fractal and Holographic Lenses",
+    "file": "Papers/Super%20Thinking/Innovator%27s%20Journey_%20Paving%20%22The%20Way%22%20Through%20Fractal%20and%20Holographic%20Lenses.pdf",
+    "category": "Psychology",
+    "desc": "Holographic boundary-bulk logic and interference framing"
+  },
+  {
+    "title": "Investigating the Cognitive Interface Between Human Prompt Design and AI Text Generation",
+    "file": "Papers/Super%20Thinking/Investigating%20the%20Cognitive%20Interface%20Between%20Human%20Prompt%20Design%20and%20AI%20Text%20Generation.pdf",
+    "category": "Psychology",
+    "desc": "UI mapping, interaction design, and visualization logic"
+  },
+  {
+    "title": "The Coming of the Universal Joke and Perceptual Reconfiguration",
+    "file": "Papers/Super%20Thinking/The%20Coming%20of%20the%20Universal%20Joke%20and%20Perceptual%20Reconfiguration.pdf",
+    "category": "Psychology",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "The Council of Martins Journal Guiding the Donut of Attention",
+    "file": "Papers/Super%20Thinking/The%20Council%20of%20Martins%20Journal_%20Guiding%20the%20Donut%20of%20Attention.pdf",
+    "category": "Psychology",
+    "desc": "Attention dynamics, control surfaces, and stability windows"
+  },
+  {
+    "title": "The Gyroscopic Self A Donut Model Integrating the Circles of Human Experience",
+    "file": "Papers/Super%20Thinking/The%20Gyroscopic%20Self_%20A%20Donut%20Model%20Integrating%20the%20Circles%20of%20Human%20Experience.pdf",
+    "category": "Psychology",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "The Universal Joke as a Tool for Positive Spacetime Reconfiguration",
+    "file": "Papers/Super%20Thinking/The%20Universal%20Joke%20as%20a%20Tool%20for%20Positive%20Spacetime%20Reconfiguration.pdf",
+    "category": "Psychology",
+    "desc": "Concept framing and synthesis notes based on the title"
+  },
+  {
+    "title": "3D Object Selection and Manipulation Techniques in WebXR (VR AR) Interfaces",
+    "file": "Papers/Technicalities%20-%20Coding/3D%20Object%20Selection%20and%20Manipulation%20Techniques%20in%20WebXR%20%28VR_AR%29%20Interfaces.pdf",
+    "category": "Interfaces & Engineering",
+    "desc": "UI mapping, interaction design, and visualization logic"
+  },
+  {
+    "title": "Adaptive Modality Selection in Multimodal Wearable and XR Interfaces",
+    "file": "Papers/Technicalities%20-%20Coding/Adaptive%20Modality%20Selection%20in%20Multimodal%20Wearable%20and%20XR%20Interfaces.pdf",
+    "category": "Interfaces & Engineering",
+    "desc": "UI mapping, interaction design, and visualization logic"
+  },
+  {
+    "title": "Dwell-Based Head and Gaze Tracking Interfaces Using MediaPipe (1)",
+    "file": "Papers/Technicalities%20-%20Coding/Dwell-Based%20Head%20and%20Gaze%20Tracking%20Interfaces%20Using%20MediaPipe%20%281%29.pdf",
+    "category": "Interfaces & Engineering",
+    "desc": "UI mapping, interaction design, and visualization logic"
+  },
+  {
+    "title": "Fractal Interfaces and the \"Language of Light\" in XR UI Design",
+    "file": "Papers/Technicalities%20-%20Coding/Fractal%20Interfaces%20and%20the%20%22Language%20of%20Light%22%20in%20XR%20UI%20Design.pdf",
+    "category": "Interfaces & Engineering",
+    "desc": "UI mapping, interaction design, and visualization logic; optics, light behavior, and display feasibility"
+  },
+  {
+    "title": "Head Gaze Pose-Driven UI Activation Systems",
+    "file": "Papers/Technicalities%20-%20Coding/Head_Gaze%20Pose-Driven%20UI%20Activation%20Systems.pdf",
+    "category": "Interfaces & Engineering",
+    "desc": "UI mapping, interaction design, and visualization logic"
+  },
+  {
+    "title": "Physiological adaptive UI (coherence EEG:HRV)",
+    "file": "Papers/Technicalities%20-%20Coding/Physiological%20adaptive%20UI%20%28coherence%20EEG%3AHRV%29.pdf",
+    "category": "Interfaces & Engineering",
+    "desc": "Neural signals, brain dynamics, and measurement pipelines; UI mapping, interaction design, and visualization logic"
+  },
+  {
+    "title": "Spatial Menu Interfaces Anchored to Geometric Objects in 3D Environments",
+    "file": "Papers/Technicalities%20-%20Coding/Spatial%20Menu%20Interfaces%20Anchored%20to%20Geometric%20Objects%20in%203D%20Environments.pdf",
+    "category": "Interfaces & Engineering",
+    "desc": "UI mapping, interaction design, and visualization logic"
+  },
+  {
+    "title": "fractal shaders",
+    "file": "Papers/Technicalities%20-%20Coding/fractal%20shaders.pdf",
+    "category": "Interfaces & Engineering",
+    "desc": "Concept framing and synthesis notes based on the title"
+  }
+];
+
+    const searchInput = document.getElementById('searchInput');
+    const filterChips = document.getElementById('filterChips');
+    const grid = document.getElementById('paperGrid');
+    const resultCount = document.getElementById('resultCount');
+
+    const state = { query: '', category: 'All' };
+
+    function uniqueCategories(data) {
+      const set = new Set(data.map(item => item.category));
+      const order = [
+        'All',
+        'Foundations',
+        'Geometry',
+        'Holography & Light',
+        'Time & Rhythm',
+        'Psychology',
+        'Language',
+        'Interfaces & Engineering',
+        'Systems Mapping',
+        'Ritual & Culture',
+        'Field Atlases'
+      ];
+      const ordered = order.filter(cat => cat === 'All' || set.has(cat));
+      const extras = Array.from(set).filter(cat => !order.includes(cat)).sort((a, b) => a.localeCompare(b));
+      return [...ordered, ...extras];
+    }
+
+    function renderFilters() {
+      const cats = uniqueCategories(papers);
+      filterChips.innerHTML = '';
+      cats.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'chip' + (state.category === cat ? ' is-active' : '');
+        btn.textContent = cat;
+        btn.addEventListener('click', () => {
+          state.category = cat;
+          render();
+        });
+        filterChips.appendChild(btn);
+      });
+    }
+
+    function matches(item) {
+      const q = state.query.trim().toLowerCase();
+      const inCategory = state.category === 'All' || item.category === state.category;
+      if (!q) return inCategory;
+      const hay = (item.title + ' ' + item.desc).toLowerCase();
+      return inCategory && hay.includes(q);
+    }
+
+    function render() {
+      renderFilters();
+      const filtered = papers.filter(matches);
+      resultCount.textContent = `Showing ${filtered.length} of ${papers.length} texts`;
+      grid.innerHTML = '';
+      filtered.forEach((item, index) => {
+        const card = document.createElement('article');
+        card.className = 'card';
+
+        const cover = document.createElement('div');
+        cover.className = 'cover';
+        cover.style.setProperty('--h', (index * 37) % 360);
+
+        const body = document.createElement('div');
+        body.className = 'card-body';
+
+        const title = document.createElement('h3');
+        title.textContent = item.title;
+
+        const desc = document.createElement('p');
+        desc.textContent = item.desc || 'Scope note coming soon.';
+
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        meta.textContent = item.category;
+
+        const download = document.createElement('a');
+        download.className = 'download';
+        download.href = item.file;
+        download.textContent = 'Download PDF';
+        download.setAttribute('download', '');
+
+        body.appendChild(title);
+        body.appendChild(desc);
+        body.appendChild(meta);
+        body.appendChild(download);
+
+        card.appendChild(cover);
+        card.appendChild(body);
+        grid.appendChild(card);
+      });
+    }
+
+    searchInput.addEventListener('input', (event) => {
+      state.query = event.target.value;
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>

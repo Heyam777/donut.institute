@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Donut Institute - The Point of the Donut</title>
+  <meta name="description" content="Donut Institute: texts, schematics, and the Everything Chalice library." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bangers&family=Orbitron:wght@500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg-deep: #06070c;
+      --ink: #f6f1e6;
+      --muted: #d0c8b8;
+      --neon-orange: #ff6b2d;
+      --neon-magenta: #ff2fb3;
+      --neon-cyan: #3cf6ff;
+      --neon-yellow: #ffd12f;
+      --accent-lime: #c8ff6a;
+      --panel-cream: #fdf2df;
+      --panel-ink: #12131d;
+      --line: rgba(246, 241, 230, 0.28);
+      --shadow: 0 18px 0 #0b0b16, 0 32px 60px rgba(0, 0, 0, 0.6);
+      --glow: 0 0 22px rgba(60, 246, 255, 0.5), 0 0 60px rgba(255, 47, 179, 0.25);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Space Mono", monospace;
+      background: var(--bg);
+      min-height: 100vh;
+      position: relative;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.05) 0 1px, transparent 1px 3px);
+      opacity: 0.25;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    #matrixCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      opacity: 0.4;
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    .hero {
+      position: relative;
+      z-index: 3;
+    }
+
+    .hero-stage {
+      position: relative;
+      height: 420px;
+      margin: 28px 0 12px;
+      border-radius: 24px;
+      border: 3px solid rgba(255, 209, 47, 0.4);
+      box-shadow: var(--shadow);
+      background: linear-gradient(135deg, rgba(10, 12, 20, 0.8), rgba(20, 12, 30, 0.8));
+      background-image: url("assets/d1.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      overflow: hidden;
+    }
+
+    #heroCanvas {
+      display: none;
+    }
+
+    .page {
+      position: relative;
+      z-index: 5;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(10px);
+      background: rgba(9, 10, 16, 0.8);
+      border-bottom: 3px solid rgba(255, 209, 47, 0.4);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      min-height: 96px;
+    }
+
+    .nav {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .ascii-donut {
+      position: absolute;
+      left: 68%;
+      top: 10px;
+      width: 220px;
+      height: 120px;
+      font-family: "Space Mono", monospace;
+      font-size: 7px;
+      line-height: 7px;
+      color: var(--neon-cyan);
+      opacity: 0.65;
+      text-shadow: 0 0 10px rgba(60, 246, 255, 0.4);
+      white-space: pre;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .ascii-donut--mid {
+      left: 40%;
+      top: 22px;
+      width: 160px;
+      height: 90px;
+      font-size: 5px;
+      line-height: 5px;
+      opacity: 0.5;
+    }
+
+    .ascii-donut--small {
+      left: 18%;
+      top: 28px;
+      width: 120px;
+      height: 70px;
+      font-size: 4px;
+      line-height: 4px;
+      opacity: 0.4;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 20px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      background: linear-gradient(180deg, rgba(20, 22, 34, 0.9), rgba(12, 14, 22, 0.9));
+      font-family: "Orbitron", sans-serif;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      color: #e9e9f2;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08), 0 12px 28px rgba(0, 0, 0, 0.55);
+    }
+
+    .brand .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #e4c07a;
+      box-shadow: 0 0 8px rgba(228, 192, 122, 0.45);
+    }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 0.85rem;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding-bottom: 4px;
+      border-bottom: 1px solid transparent;
+      transition: color 0.2s ease, border-color 0.2s ease;
+      font-family: "Anton", sans-serif;
+    }
+
+    .nav-links a:hover {
+      color: var(--ink);
+      border-color: var(--gold);
+    }
+
+    .hero {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 72px 24px 48px;
+    }
+
+    .hero-title {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .hero-title h1 {
+      font-family: "Orbitron", sans-serif;
+      font-size: clamp(3rem, 6.5vw, 5.6rem);
+      letter-spacing: 0.18em;
+      margin: 0 0 12px;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, var(--neon-yellow), var(--neon-orange), var(--neon-magenta));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow:
+        4px 4px 0 rgba(0, 0, 0, 0.7),
+        0 0 18px rgba(60, 246, 255, 0.35);
+      font-style: italic;
+    }
+
+    .glitch-text {
+      position: relative;
+    }
+
+    .glitch-text::before,
+    .glitch-text::after {
+      content: attr(data-text);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      overflow: hidden;
+      color: transparent;
+      text-shadow: 2px 0 var(--neon-cyan), -2px 0 var(--neon-magenta);
+      opacity: 0.7;
+      mix-blend-mode: screen;
+      animation: glitch 2.8s infinite;
+    }
+
+    .glitch-text::after {
+      text-shadow: -2px 0 var(--neon-yellow), 2px 0 var(--neon-cyan);
+      animation-delay: 1.4s;
+    }
+
+    @keyframes glitch {
+      0% { clip-path: inset(0 0 80% 0); transform: translate(0, 0); }
+      10% { clip-path: inset(10% 0 60% 0); transform: translate(-2px, -1px); }
+      20% { clip-path: inset(40% 0 30% 0); transform: translate(2px, 1px); }
+      30% { clip-path: inset(60% 0 10% 0); transform: translate(-1px, 2px); }
+      40%, 100% { clip-path: inset(0 0 80% 0); transform: translate(0, 0); }
+    }
+
+    .hero-title p {
+      max-width: 760px;
+      margin: 0 auto 24px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 1rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 22px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: #e9e9f2;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.8rem;
+      background: linear-gradient(180deg, rgba(20, 22, 34, 0.9), rgba(12, 14, 22, 0.9));
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+      text-decoration: none;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08), 0 12px 28px rgba(0, 0, 0, 0.55);
+    }
+
+    .btn.primary {
+      border-color: rgba(255, 255, 255, 0.35);
+      background: linear-gradient(180deg, rgba(20, 22, 34, 0.9), rgba(12, 14, 22, 0.9));
+      color: #e9e9f2;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08), 0 12px 28px rgba(0, 0, 0, 0.55);
+    }
+
+    .btn:hover { transform: translateY(-2px); border-color: var(--gold); }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+    }
+
+    .panel {
+      background: linear-gradient(160deg, rgba(35, 45, 70, 0.78), rgba(10, 12, 22, 0.68));
+      border: 2px solid rgba(120, 210, 255, 0.45);
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: 0 18px 40px rgba(6, 10, 22, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+      min-height: 210px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      backdrop-filter: blur(14px);
+    }
+
+    .panel-symbol {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      border: 2px solid rgba(120, 210, 255, 0.6);
+      background: rgba(12, 18, 32, 0.9);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5), inset 0 0 14px rgba(60, 246, 255, 0.15);
+    }
+
+    .glyph {
+      width: 38px;
+      height: 38px;
+      stroke: var(--neon-cyan);
+      stroke-width: 1.6;
+      fill: none;
+    }
+
+    .panel h2 {
+      font-family: "Anton", sans-serif;
+      font-size: 1.2rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin: 0 0 12px;
+      color: #e7f6ff;
+    }
+
+    .panel p {
+      margin: 0 0 12px;
+      color: #c8d9ee;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .panel .callout {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      border: 2px solid rgba(120, 210, 255, 0.5);
+      background: rgba(12, 18, 32, 0.85);
+      color: #bdeaff;
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 48px 24px 64px;
+    }
+
+    .section h3 {
+      font-family: "Anton", sans-serif;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-size: 1.1rem;
+      color: var(--neon-cyan);
+      margin: 0 0 12px;
+    }
+
+    .signal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+    }
+
+    .signal-card {
+      background: linear-gradient(150deg, rgba(30, 40, 68, 0.78), rgba(10, 12, 22, 0.72));
+      border: 2px solid rgba(120, 210, 255, 0.4);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 18px 40px rgba(6, 10, 22, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+    }
+
+    .signal-card h4 {
+      margin: 0 0 8px;
+      font-size: 0.95rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #e7f6ff;
+    }
+
+    .signal-card p {
+      margin: 0;
+      color: #c8d9ee;
+      line-height: 1.6;
+      font-size: 0.9rem;
+    }
+
+    .cta {
+      background: rgba(12, 14, 22, 0.65);
+      border: 3px solid rgba(255, 209, 47, 0.35);
+      border-radius: 24px;
+      padding: 28px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: 20px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .cta p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .cta form {
+      display: grid;
+      gap: 10px;
+    }
+
+    .cta input,
+    .cta textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 3px solid rgba(255, 209, 47, 0.35);
+      background: rgba(14, 16, 24, 0.7);
+      color: var(--ink);
+      font-family: "Space Mono", monospace;
+    }
+
+    .cta textarea { min-height: 110px; resize: vertical; }
+
+    footer {
+      text-align: center;
+      padding: 32px 24px 60px;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 980px) {
+      .cta { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .nav { flex-direction: column; align-items: flex-start; }
+      .hero-title h1 { letter-spacing: 0.1em; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="matrixCanvas" aria-hidden="true"></canvas>
+  <div class="page">
+    <header>
+      <div class="nav">
+        <div class="brand"><span class="dot" aria-hidden="true"></span> Donut Institute</div>
+        <nav class="nav-links" aria-label="Primary">
+          <a href="library.html">Library</a>
+          <a href="#contact">Contact</a>
+        </nav>
+      </div>
+      <pre id="asciiDonutMain" class="ascii-donut" aria-hidden="true"></pre>
+      <pre id="asciiDonutMid" class="ascii-donut ascii-donut--mid" aria-hidden="true"></pre>
+      <pre id="asciiDonutSmall" class="ascii-donut ascii-donut--small" aria-hidden="true"></pre>
+    </header>
+
+    <main class="hero">
+      <div class="hero-title">
+        <h1 class="glitch-text" data-text="The Point of the Donut">The Point of the Donut</h1>
+        <p>
+          Around 150 texts generated in result of Deep Search done with OpeanAI is coming in later. All extra for the Donut of Attention Project.
+        </p>
+        <div class="hero-actions">
+          <a class="btn primary" href="library.html">Open the Library</a>
+          <a class="btn" href="#contact">Open Contact</a>
+        </div>
+      </div>
+
+      <div class="hero-stage" aria-hidden="true"></div>
+    </main>
+
+    <section class="section" id="contact">
+      <div class="cta">
+        <div>
+          <h3>Submit Texts and Notes</h3>
+          <p>Send new PDFs, scans, and measurement pages. We will stage them into the library grid.</p>
+        </div>
+        <form
+          name="vault-submission"
+          method="POST"
+          data-netlify="true"
+          netlify-honeypot="bot-field"
+        >
+          <input type="hidden" name="form-name" value="vault-submission" />
+          <input type="hidden" name="bot-field" />
+          <input type="text" name="name" placeholder="Name" />
+          <input type="email" name="email" placeholder="Email" />
+          <textarea name="message" placeholder="Paste links or describe the files you want staged."></textarea>
+          <button class="btn primary" type="submit">Send to the Vault</button>
+        </form>
+      </div>
+    </section>
+
+    <footer>
+      <div>Donut Institute - Everything Chalice Library</div>
+      <div>Ambient drones only. Coherence guides the glow.</div>
+    </footer>
+  </div>
+
+  <!-- three.js removed: hero now uses a background image -->
+  <script>
+    (function () {
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const matrixCanvas = document.getElementById('matrixCanvas');
+      const mctx = matrixCanvas.getContext('2d');
+      const glyphs = 'DONUT0123456789*+.-=';
+      let cols = [];
+      let fontSize = 16;
+      let mw = 0;
+      let mh = 0;
+      let dpr = 1;
+
+      function resizeMatrix() {
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        mw = window.innerWidth;
+        mh = window.innerHeight;
+        matrixCanvas.width = mw * dpr;
+        matrixCanvas.height = mh * dpr;
+        matrixCanvas.style.width = mw + 'px';
+        matrixCanvas.style.height = mh + 'px';
+        mctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        fontSize = Math.max(12, Math.floor(mw / 80));
+        cols = Array.from({ length: Math.ceil(mw / fontSize) }, () => Math.random() * mh);
+      }
+
+      function drawMatrix() {
+        if (reduceMotion) return;
+        mctx.fillStyle = 'rgba(8, 10, 18, 0.2)';
+        mctx.fillRect(0, 0, mw, mh);
+        mctx.font = `${fontSize}px Space Mono, monospace`;
+        for (let i = 0; i < cols.length; i++) {
+          const text = glyphs[Math.floor(Math.random() * glyphs.length)];
+          const x = i * fontSize;
+          const y = cols[i];
+          const hue = (i * 12 + performance.now() * 0.02) % 360;
+          mctx.fillStyle = `hsla(${hue}, 90%, 60%, 0.6)`;
+          mctx.fillText(text, x, y);
+          cols[i] = y > mh + Math.random() * 100 ? 0 : y + fontSize * 0.9;
+        }
+        requestAnimationFrame(drawMatrix);
+      }
+
+      resizeMatrix();
+      if (!reduceMotion) requestAnimationFrame(drawMatrix);
+
+      window.addEventListener('resize', () => {
+        resizeMatrix();
+      });
+
+      const asciiTargets = [
+        { el: document.getElementById('asciiDonutMain'), A: 1.0, B: 1.0, aSpeed: 0.07, bSpeed: 0.03 },
+        { el: document.getElementById('asciiDonutMid'), A: 0.4, B: 0.8, aSpeed: 0.05, bSpeed: 0.025 },
+        { el: document.getElementById('asciiDonutSmall'), A: 1.8, B: 0.2, aSpeed: 0.09, bSpeed: 0.04 }
+      ].filter(item => item.el);
+      if (asciiTargets.length) {
+        const chars = '.,-~:;=!*#$@';
+        function renderDonut(A, B) {
+          const b = [];
+          const z = [];
+          const cA = Math.cos(A), sA = Math.sin(A);
+          const cB = Math.cos(B), sB = Math.sin(B);
+          for (let k = 0; k < 1760; k++) {
+            b[k] = k % 80 === 79 ? '\n' : ' ';
+            z[k] = 0;
+          }
+          for (let j = 0; j < Math.PI * 2; j += 0.07) {
+            const ct = Math.cos(j), st = Math.sin(j);
+            for (let i = 0; i < Math.PI * 2; i += 0.02) {
+              const sp = Math.sin(i), cp = Math.cos(i);
+              const h = ct + 2;
+              const D = 1 / (sp * h * sA + st * cA + 5);
+              const t = sp * h * cA - st * sA;
+              const x = Math.floor(40 + 30 * D * (cp * h * cB - t * sB));
+              const y = Math.floor(12 + 15 * D * (cp * h * sB + t * cB));
+              const o = x + 80 * y;
+              const N = Math.floor(8 * ((st * sA - sp * ct * cA) * cB - sp * ct * sA - st * cA - cp * ct * sB));
+              if (y < 22 && y >= 0 && x >= 0 && x < 79 && D > z[o]) {
+                z[o] = D;
+                b[o] = chars[N > 0 ? N : 0];
+              }
+            }
+          }
+          return b.join('');
+        }
+
+        function asciiFrame() {
+          asciiTargets.forEach(item => {
+            item.A += item.aSpeed;
+            item.B += item.bSpeed;
+            item.el.textContent = renderDonut(item.A, item.B);
+          });
+          if (!reduceMotion) {
+            setTimeout(asciiFrame, 55);
+          }
+        }
+        asciiFrame();
+      }
+    })();
+  </script>
+</body>
+</html>
