@@ -1376,9 +1376,20 @@
         const download = document.createElement('a');
         download.className = 'download';
         const relativeFile = String(item.file || '').replace(/^\/+/, '');
-        download.href = `/${relativeFile}`;
+        const primaryUrl = `/${relativeFile}`;
+        const fallbackUrl = `https://raw.githubusercontent.com/Heyam777/donut.institute/main/${relativeFile}`;
+        download.href = primaryUrl;
         download.textContent = 'Download PDF';
         download.setAttribute('download', '');
+        download.addEventListener('click', async (event) => {
+          event.preventDefault();
+          try {
+            const response = await fetch(primaryUrl, { method: 'HEAD', cache: 'no-store' });
+            window.location.href = response.ok ? primaryUrl : fallbackUrl;
+          } catch (error) {
+            window.location.href = fallbackUrl;
+          }
+        });
 
         body.appendChild(title);
         body.appendChild(desc);
