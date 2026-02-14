@@ -1375,7 +1375,8 @@
 
         const download = document.createElement('a');
         download.className = 'download';
-        download.href = item.file;
+        const relativeFile = String(item.file || '').replace(/^\/+/, '');
+        download.href = `/${relativeFile}`;
         download.textContent = 'Download PDF';
         download.setAttribute('download', '');
 
