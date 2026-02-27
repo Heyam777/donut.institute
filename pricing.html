@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Donut Institute - Pricing</title>
+  <meta name="description" content="Choose a Donut Institute membership tier." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0b14;
+      --ink: #f4f0e6;
+      --muted: #c7c0b4;
+      --gold: #e4c07a;
+      --teal: #8bd7d0;
+      --line: rgba(244, 240, 230, 0.16);
+      --glass: rgba(18, 18, 30, 0.78);
+      --shadow: 0 18px 42px rgba(2, 4, 12, 0.6);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        radial-gradient(900px 700px at 20% 0%, rgba(155, 120, 255, 0.15), transparent 60%),
+        radial-gradient(900px 700px at 80% 20%, rgba(228, 192, 122, 0.14), transparent 60%),
+        linear-gradient(180deg, #090a12 0%, #0d1020 60%, #0a0b14 100%);
+      font-family: "Space Mono", monospace;
+    }
+
+    .wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 28px 22px 70px;
+    }
+
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .brand {
+      text-decoration: none;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-family: "Orbitron", sans-serif;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+    }
+
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .links a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .links a:hover { color: var(--ink); }
+
+    h1 {
+      margin: 0 0 10px;
+      font-family: "Orbitron", sans-serif;
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, #b8d7ff, #f2d58a, #8bd7d0);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .lead {
+      margin: 0 0 14px;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 760px;
+    }
+
+    .status {
+      margin: 0 0 24px;
+      display: inline-flex;
+      border: 1px solid rgba(139, 215, 208, 0.5);
+      border-radius: 999px;
+      background: rgba(18, 28, 38, 0.6);
+      padding: 8px 12px;
+      color: #c7eff0;
+      font-size: 0.76rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    .tier {
+      background: var(--glass);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .tier h2 {
+      margin: 0;
+      font-family: "Orbitron", sans-serif;
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .price {
+      font-size: 1.45rem;
+      color: var(--gold);
+      letter-spacing: 0.06em;
+    }
+
+    .tier ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.88rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 10px 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.72rem;
+      background: rgba(20, 22, 34, 0.75);
+    }
+
+    .btn:hover { border-color: var(--gold); }
+
+    .tier.featured {
+      border-color: rgba(228, 192, 122, 0.5);
+      box-shadow: 0 0 0 1px rgba(228, 192, 122, 0.25), var(--shadow);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <a class="brand" href="index.html">Donut Institute</a>
+      <nav class="links" aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="library.html">Library</a>
+        <a href="register.html">Register</a>
+        <a href="login.html">Login</a>
+      </nav>
+    </div>
+
+    <h1>Membership Pricing</h1>
+    <p class="lead">
+      Choose your access tier. This preview routes to register/login pages and updates local member state until Stripe + backend are connected.
+    </p>
+    <p class="status" id="memberStatus">Membership: Guest</p>
+
+    <section class="grid">
+      <article class="tier">
+        <h2>Starter</h2>
+        <div class="price">$19/mo</div>
+        <ul>
+          <li>Foundations curriculum</li>
+          <li>Core paper library access</li>
+          <li>20 downloads per month</li>
+        </ul>
+        <a class="btn" href="register.html?plan=starter">Choose Starter</a>
+      </article>
+
+      <article class="tier featured">
+        <h2>Research</h2>
+        <div class="price">$49/mo</div>
+        <ul>
+          <li>Full text library + all tracks</li>
+          <li>Deep syntheses and updates</li>
+          <li>200 downloads per month</li>
+        </ul>
+        <a class="btn" href="register.html?plan=research">Choose Research</a>
+      </article>
+
+      <article class="tier">
+        <h2>Patron</h2>
+        <div class="price">$149/mo</div>
+        <ul>
+          <li>Everything in Research</li>
+          <li>Lab notes and private updates</li>
+          <li>Monthly strategy/Q&amp;A call</li>
+        </ul>
+        <a class="btn" href="register.html?plan=patron">Choose Patron</a>
+      </article>
+    </section>
+  </div>
+
+  <script src="assets/member-preview.js"></script>
+  <script>
+    (function () {
+      const status = document.getElementById('memberStatus');
+      const params = new URLSearchParams(window.location.search);
+      const upgrade = params.get('upgrade');
+      if (status && window.DonutMember) {
+        const member = window.DonutMember.readMember();
+        if (member && member.status === 'active') {
+          status.textContent = `Membership: ${member.plan} (${member.email || 'active'})`;
+        }
+      }
+      if (upgrade) {
+        const target = String(upgrade).toLowerCase();
+        status.textContent += ` | Upgrade target: ${target}`;
+      }
+    })();
+  </script>
+</body>
+</html>

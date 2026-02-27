@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Donut Institute - Login</title>
+  <meta name="description" content="Login to Donut Institute membership." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0b14;
+      --ink: #f4f0e6;
+      --muted: #c7c0b4;
+      --gold: #e4c07a;
+      --line: rgba(244, 240, 230, 0.18);
+      --glass: rgba(18, 18, 30, 0.8);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        radial-gradient(900px 700px at 25% 5%, rgba(139, 215, 208, 0.16), transparent 60%),
+        radial-gradient(900px 700px at 80% 20%, rgba(228, 192, 122, 0.13), transparent 60%),
+        linear-gradient(180deg, #080a12 0%, #101327 60%, #0a0b14 100%);
+      font-family: "Space Mono", monospace;
+      padding: 24px;
+    }
+
+    .wrap {
+      max-width: 620px;
+      margin: 0 auto;
+      background: var(--glass);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 18px 45px rgba(1, 2, 8, 0.58);
+    }
+
+    .top {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .top a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-family: "Orbitron", sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.4rem);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.9rem;
+    }
+
+    form {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    input,
+    select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(9, 11, 18, 0.8);
+      color: var(--ink);
+      padding: 10px 12px;
+      font-family: "Space Mono", monospace;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .btn {
+      display: inline-flex;
+      justify-content: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(20, 22, 34, 0.8);
+      color: var(--ink);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.75rem;
+      padding: 10px 14px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .btn:hover { border-color: var(--gold); }
+
+    .status {
+      border: 1px solid rgba(139, 215, 208, 0.4);
+      border-radius: 10px;
+      padding: 10px;
+      color: #d5f7f5;
+      font-size: 0.8rem;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <a href="index.html">Home</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="register.html">Register</a>
+      <a href="library.html">Library</a>
+    </div>
+
+    <h1>Login</h1>
+    <p>
+      Preview sign-in updates your local membership state so you can test gated library behavior.
+    </p>
+
+    <form id="loginForm">
+      <label>Email
+        <input id="email" type="email" autocomplete="email" required placeholder="you@example.com" />
+      </label>
+
+      <label>Plan (Preview)
+        <select id="plan">
+          <option value="starter">Starter</option>
+          <option value="research">Research</option>
+          <option value="patron">Patron</option>
+        </select>
+      </label>
+
+      <div class="actions">
+        <button class="btn" type="submit">Sign In</button>
+        <button class="btn" id="logoutBtn" type="button">Logout</button>
+        <a class="btn" href="library.html">Open Library</a>
+      </div>
+    </form>
+
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+  </div>
+
+  <script src="assets/member-preview.js"></script>
+  <script>
+    (function () {
+      const form = document.getElementById('loginForm');
+      const emailInput = document.getElementById('email');
+      const planSelect = document.getElementById('plan');
+      const status = document.getElementById('status');
+      const logoutBtn = document.getElementById('logoutBtn');
+
+      function refreshStatus() {
+        if (!window.DonutMember) {
+          status.textContent = 'Membership helper not loaded.';
+          return;
+        }
+        const member = window.DonutMember.readMember();
+        if (!member) {
+          status.textContent = 'Current session: guest (no active member).';
+          return;
+        }
+        emailInput.value = member.email || '';
+        if (member.plan && planSelect.querySelector(`option[value="${member.plan}"]`)) {
+          planSelect.value = member.plan;
+        }
+        status.textContent = `Current session: ${member.email || 'member'} on ${member.plan} plan.`;
+      }
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const email = emailInput.value.trim().toLowerCase();
+        if (!email) {
+          return;
+        }
+        if (window.DonutMember) {
+          window.DonutMember.saveMember({
+            email,
+            plan: planSelect.value,
+            status: 'active'
+          });
+        }
+        refreshStatus();
+      });
+
+      logoutBtn.addEventListener('click', () => {
+        if (window.DonutMember) {
+          window.DonutMember.clearMember();
+        }
+        refreshStatus();
+      });
+
+      refreshStatus();
+    })();
+  </script>
+</body>
+</html>

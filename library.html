@@ -310,6 +310,48 @@
       font-size: 0.8rem;
     }
 
+    .member-gate {
+      max-width: 1200px;
+      margin: 8px auto 6px;
+      padding: 0 24px;
+    }
+
+    .member-gate-card {
+      background: var(--glass-soft);
+      border: 1px solid rgba(244, 240, 230, 0.16);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .member-gate-card h2 {
+      margin: 0 0 8px;
+      font-family: "Orbitron", sans-serif;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+    }
+
+    .member-gate-card p {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.6;
+    }
+
+    .member-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .member-actions .download {
+      margin-top: 0;
+      font-size: 0.68rem;
+      padding: 8px 12px;
+    }
+
     @media (max-width: 880px) {
       .controls { grid-template-columns: 1fr; }
     }
@@ -330,6 +372,9 @@
         <a class="brand" href="index.html"><span class="dot" aria-hidden="true"></span> Donut Institute</a>
         <nav class="nav-links" aria-label="Primary">
           <a href="index.html">Home</a>
+          <a href="pricing.html">Pricing</a>
+          <a href="register.html">Register</a>
+          <a href="login.html">Login</a>
           <a href="#vault">Text Vault</a>
           <a href="#filters">Filters</a>
         </nav>
@@ -339,8 +384,8 @@
     <section class="hero" id="vault">
       <h1>Library Grid</h1>
       <p>
-        Every PDF in the Papers folder. Each square holds a cover image, a short scope note,
-        and a direct download.
+        Membership preview mode: each text is mapped to a tier and access state.
+        Direct public download links are being replaced by protected document flow.
       </p>
     </section>
 
@@ -352,10 +397,24 @@
       <div class="filters" id="filterChips"></div>
     </section>
 
+    <section class="member-gate">
+      <div class="member-gate-card">
+        <h2>Member Access Status</h2>
+        <p id="memberGateStatus">Checking membership...</p>
+        <p id="memberGateHint">This is preview-mode gating in browser storage until backend auth is enabled.</p>
+        <div class="member-actions">
+          <a class="download" href="register.html">Create Account</a>
+          <a class="download" href="login.html">Login</a>
+          <a class="download" href="pricing.html">View Plans</a>
+        </div>
+      </div>
+    </section>
+
     <div class="count" id="resultCount"></div>
     <section class="grid" id="paperGrid" aria-live="polite"></section>
   </div>
 
+  <script src="assets/member-preview.js"></script>
   <script>
     const papers = [
   {
@@ -1300,8 +1359,47 @@
     const filterChips = document.getElementById('filterChips');
     const grid = document.getElementById('paperGrid');
     const resultCount = document.getElementById('resultCount');
+    const memberGateStatus = document.getElementById('memberGateStatus');
+    const memberGateHint = document.getElementById('memberGateHint');
 
     const state = { query: '', category: 'All' };
+    const membershipRank = { starter: 1, research: 2, patron: 3 };
+
+    function currentMember() {
+      if (!window.DonutMember) {
+        return null;
+      }
+      return window.DonutMember.readMember();
+    }
+
+    function requiredPlanForItem(item) {
+      if (item.category === 'Foundations') {
+        return 'starter';
+      }
+      if (item.category === 'Psychology' || item.category === 'Language' || item.category === 'Ritual & Culture') {
+        return 'research';
+      }
+      return 'research';
+    }
+
+    function hasAccess(requiredPlan) {
+      const member = currentMember();
+      if (!member || member.status !== 'active') {
+        return false;
+      }
+      return (membershipRank[member.plan] || 0) >= (membershipRank[requiredPlan] || 99);
+    }
+
+    function updateMemberGate() {
+      const member = currentMember();
+      if (!member) {
+        memberGateStatus.textContent = 'Guest mode. Sign in to unlock member documents.';
+        memberGateHint.textContent = 'Preview note: backend auth, Firestore event logging, and signed URLs are next release.';
+        return;
+      }
+      memberGateStatus.textContent = `Signed in as ${member.email || 'member'} on ${member.plan} plan.`;
+      memberGateHint.textContent = 'Preview mode stores access state locally in this browser only.';
+    }
 
     function uniqueCategories(data) {
       const set = new Set(data.map(item => item.category));
@@ -1371,25 +1469,54 @@
 
         const meta = document.createElement('div');
         meta.className = 'meta';
-        meta.textContent = item.category;
+        const requiredPlan = requiredPlanForItem(item);
+        meta.textContent = `${item.category} | ${requiredPlan} plan`;
 
         const download = document.createElement('a');
         download.className = 'download';
         const relativeFile = String(item.file || '').replace(/^\/+/, '');
         const primaryUrl = `/${relativeFile}`;
         const fallbackUrl = `https://raw.githubusercontent.com/Heyam777/donut.institute/main/${relativeFile}`;
-        download.href = primaryUrl;
-        download.textContent = 'Download PDF';
-        download.setAttribute('download', '');
-        download.addEventListener('click', async (event) => {
-          event.preventDefault();
-          try {
-            const response = await fetch(primaryUrl, { method: 'HEAD', cache: 'no-store' });
-            window.location.href = response.ok ? primaryUrl : fallbackUrl;
-          } catch (error) {
-            window.location.href = fallbackUrl;
-          }
-        });
+        if (hasAccess(requiredPlan)) {
+          download.href = primaryUrl;
+          download.textContent = 'Download PDF';
+          download.setAttribute('download', '');
+          download.addEventListener('click', async (event) => {
+            event.preventDefault();
+            if (window.DonutMember) {
+              window.DonutMember.recordDownloadEvent({
+                email: (currentMember() || {}).email || '',
+                plan: (currentMember() || {}).plan || '',
+                title: item.title,
+                file: item.file,
+                status: 'granted',
+                reason: 'ok'
+              });
+            }
+            try {
+              const response = await fetch(primaryUrl, { method: 'HEAD', cache: 'no-store' });
+              window.location.href = response.ok ? primaryUrl : fallbackUrl;
+            } catch (error) {
+              window.location.href = fallbackUrl;
+            }
+          });
+        } else {
+          const member = currentMember();
+          download.href = member ? `pricing.html?upgrade=${requiredPlan}` : `register.html?plan=${requiredPlan}`;
+          download.textContent = member ? `Upgrade to ${requiredPlan}` : 'Sign in to unlock';
+          download.addEventListener('click', () => {
+            if (window.DonutMember) {
+              window.DonutMember.recordDownloadEvent({
+                email: (currentMember() || {}).email || '',
+                plan: (currentMember() || {}).plan || 'guest',
+                title: item.title,
+                file: item.file,
+                status: 'denied',
+                reason: 'tier_block'
+              });
+            }
+          });
+        }
 
         body.appendChild(title);
         body.appendChild(desc);
@@ -1407,6 +1534,7 @@
       render();
     });
 
+    updateMemberGate();
     render();
   </script>
 </body>

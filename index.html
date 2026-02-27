@@ -14,6 +14,7 @@
       --bg-deep: #06070c;
       --ink: #f6f1e6;
       --muted: #d0c8b8;
+      --gold: #e4c07a;
       --neon-orange: #ff6b2d;
       --neon-magenta: #ff2fb3;
       --neon-cyan: #3cf6ff;
@@ -410,6 +411,63 @@
       font-size: 0.9rem;
     }
 
+    .tier-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .tier-card {
+      background: linear-gradient(150deg, rgba(30, 40, 68, 0.78), rgba(10, 12, 22, 0.72));
+      border: 2px solid rgba(120, 210, 255, 0.4);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 18px 40px rgba(6, 10, 22, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+    }
+
+    .tier-card h4 {
+      margin: 0 0 8px;
+      font-size: 1.05rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #e7f6ff;
+      font-family: "Anton", sans-serif;
+    }
+
+    .tier-price {
+      margin: 0 0 10px;
+      font-size: 1.4rem;
+      color: var(--neon-yellow);
+      font-family: "Orbitron", sans-serif;
+      letter-spacing: 0.08em;
+    }
+
+    .tier-card ul {
+      margin: 0;
+      padding-left: 18px;
+      color: #c8d9ee;
+      line-height: 1.7;
+      font-size: 0.9rem;
+    }
+
+    .member-pill {
+      margin: 14px auto 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 2px solid rgba(120, 210, 255, 0.5);
+      background: rgba(12, 18, 32, 0.75);
+      color: #bdeaff;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
     .cta {
       background: rgba(12, 14, 22, 0.65);
       border: 3px solid rgba(255, 209, 47, 0.35);
@@ -472,6 +530,9 @@
         <div class="brand"><span class="dot" aria-hidden="true"></span> Donut Institute</div>
         <nav class="nav-links" aria-label="Primary">
           <a href="library.html">Library</a>
+          <a href="pricing.html">Pricing</a>
+          <a href="#curriculum">Curriculum</a>
+          <a href="login.html">Login</a>
           <a href="#contact">Contact</a>
         </nav>
       </div>
@@ -484,16 +545,68 @@
       <div class="hero-title">
         <h1 class="glitch-text" data-text="The Point of the Donut">The Point of the Donut</h1>
         <p>
-          150 deep-search texts generated with advanced OpenAI models are now live in the Library for the Donut of Attention project.
+          Paid membership learning platform in progress: protected papers, track-based curriculum, and measurable research progress.
         </p>
         <div class="hero-actions">
-          <a class="btn primary" href="library.html">Open the Library</a>
-          <a class="btn" href="#contact">Open Contact</a>
+          <a class="btn primary" href="pricing.html">Start Membership</a>
+          <a class="btn" href="library.html">Open Library Preview</a>
         </div>
+        <p class="member-pill" id="memberStatusPill">Membership status: guest</p>
       </div>
 
       <div class="hero-stage" aria-hidden="true"></div>
     </main>
+
+    <section class="section" id="membership">
+      <h3>Membership Tiers</h3>
+      <div class="tier-grid">
+        <article class="tier-card">
+          <h4>Starter</h4>
+          <p class="tier-price">$19/mo</p>
+          <ul>
+            <li>Foundations track access</li>
+            <li>Core paper set</li>
+            <li>20 downloads per month</li>
+          </ul>
+        </article>
+        <article class="tier-card">
+          <h4>Research</h4>
+          <p class="tier-price">$49/mo</p>
+          <ul>
+            <li>All tracks and full library</li>
+            <li>Priority updates and synthesis notes</li>
+            <li>200 downloads per month</li>
+          </ul>
+        </article>
+        <article class="tier-card">
+          <h4>Patron</h4>
+          <p class="tier-price">$149/mo</p>
+          <ul>
+            <li>Full access + lab notes</li>
+            <li>Monthly strategy/Q&A call</li>
+            <li>Highest download cap</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="curriculum">
+      <h3>Curriculum Tracks</h3>
+      <div class="signal-grid">
+        <article class="signal-card">
+          <h4>Track 1 - Foundations</h4>
+          <p>Donut model basics, attention geometry, and core conceptual papers.</p>
+        </article>
+        <article class="signal-card">
+          <h4>Track 2 - Applied Systems</h4>
+          <p>Interfaces, implementation patterns, and build-level case studies.</p>
+        </article>
+        <article class="signal-card">
+          <h4>Track 3 - Research Lab</h4>
+          <p>Advanced cognition/math/physics papers with guided synthesis sequence.</p>
+        </article>
+      </div>
+    </section>
 
     <section class="section" id="contact">
       <div class="cta">
@@ -523,9 +636,18 @@
     </footer>
   </div>
 
+  <script src="assets/member-preview.js"></script>
   <!-- three.js removed: hero now uses a background image -->
   <script>
     (function () {
+      const memberPill = document.getElementById('memberStatusPill');
+      if (memberPill && window.DonutMember) {
+        const member = window.DonutMember.readMember();
+        if (member && member.status === 'active') {
+          memberPill.textContent = `Membership status: ${member.plan} (${member.email || 'active'})`;
+        }
+      }
+
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const matrixCanvas = document.getElementById('matrixCanvas');
       const mctx = matrixCanvas.getContext('2d');

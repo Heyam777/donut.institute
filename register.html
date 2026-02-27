@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Donut Institute - Register</title>
+  <meta name="description" content="Create a Donut Institute member account." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0b14;
+      --ink: #f4f0e6;
+      --muted: #c7c0b4;
+      --gold: #e4c07a;
+      --line: rgba(244, 240, 230, 0.18);
+      --glass: rgba(18, 18, 30, 0.8);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        radial-gradient(900px 700px at 20% 10%, rgba(155, 120, 255, 0.16), transparent 60%),
+        radial-gradient(900px 700px at 80% 20%, rgba(228, 192, 122, 0.14), transparent 60%),
+        linear-gradient(180deg, #080a12 0%, #101327 60%, #0a0b14 100%);
+      font-family: "Space Mono", monospace;
+      padding: 24px;
+    }
+
+    .wrap {
+      max-width: 620px;
+      margin: 0 auto;
+      background: var(--glass);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 18px 45px rgba(1, 2, 8, 0.58);
+    }
+
+    .top {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .top a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-family: "Orbitron", sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.4rem);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.9rem;
+    }
+
+    form {
+      display: grid;
+      gap: 10px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    input,
+    select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(9, 11, 18, 0.8);
+      color: var(--ink);
+      padding: 10px 12px;
+      font-family: "Space Mono", monospace;
+    }
+
+    .btn {
+      margin-top: 6px;
+      display: inline-flex;
+      justify-content: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(20, 22, 34, 0.8);
+      color: var(--ink);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.75rem;
+      padding: 11px 14px;
+      cursor: pointer;
+    }
+
+    .btn:hover { border-color: var(--gold); }
+
+    .note {
+      margin-top: 12px;
+      border: 1px dashed rgba(228, 192, 122, 0.45);
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 0.78rem;
+      color: #cfd2db;
+    }
+
+    .success {
+      margin-top: 12px;
+      display: none;
+      border: 1px solid rgba(139, 215, 208, 0.45);
+      border-radius: 10px;
+      padding: 10px;
+      color: #d5f7f5;
+      font-size: 0.8rem;
+    }
+
+    .success.is-visible { display: block; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <a href="index.html">Home</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="library.html">Library</a>
+      <a href="login.html">Login</a>
+    </div>
+
+    <h1>Create Member Account</h1>
+    <p>
+      Registration preview for Donut Institute. In this stage, registration data is stored locally in this browser for UI testing.
+    </p>
+
+    <form id="registerForm">
+      <label>Email
+        <input id="email" type="email" autocomplete="email" required placeholder="you@example.com" />
+      </label>
+
+      <label>Password
+        <input id="password" type="password" minlength="8" required placeholder="8+ characters" />
+      </label>
+
+      <label>Membership Plan
+        <select id="plan">
+          <option value="starter">Starter</option>
+          <option value="research">Research</option>
+          <option value="patron">Patron</option>
+        </select>
+      </label>
+
+      <label>Primary Track
+        <select id="track">
+          <option>Foundations</option>
+          <option>Applied Systems</option>
+          <option>Research Lab</option>
+        </select>
+      </label>
+
+      <button class="btn" type="submit">Create Account</button>
+    </form>
+
+    <div id="success" class="success" role="status" aria-live="polite"></div>
+
+    <div class="note">
+      Next release will replace this preview flow with Firebase Auth, Firestore user profiles, and Stripe webhook-based memberships.
+    </div>
+  </div>
+
+  <script src="assets/member-preview.js"></script>
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const requestedPlan = params.get('plan');
+      const planSelect = document.getElementById('plan');
+      if (requestedPlan && planSelect.querySelector(`option[value="${requestedPlan}"]`)) {
+        planSelect.value = requestedPlan;
+      }
+
+      const form = document.getElementById('registerForm');
+      const success = document.getElementById('success');
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const email = document.getElementById('email').value.trim().toLowerCase();
+        const password = document.getElementById('password').value;
+        const plan = planSelect.value;
+        const track = document.getElementById('track').value;
+
+        if (!email || password.length < 8) {
+          return;
+        }
+
+        if (window.DonutMember) {
+          window.DonutMember.saveMember({
+            email,
+            plan,
+            status: 'active',
+            track
+          });
+        }
+
+        success.classList.add('is-visible');
+        success.textContent = 'Account created. Redirecting to library...';
+        window.setTimeout(() => {
+          window.location.href = 'library.html?welcome=1';
+        }, 650);
+      });
+    })();
+  </script>
+</body>
+</html>
